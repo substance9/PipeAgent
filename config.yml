@@ -1,0 +1,17 @@
+agent_system:
+
+pipe_file:
+  location: ./pipe
+
+tippers_server:
+  ip_address: 127.0.0.1
+  port: 8080
+
+logger:
+  log_files_directory: ./log/
+  rotated: yes
+
+
+
+
+
