@@ -23,7 +23,7 @@ class Reader (threading.Thread):
     def run(self):
         while(True):
             try:
-                data_line = self._pipe_file.readline()[:-1]
+                data_line = self._pipe_file.readline()#[:-1]
             except Exception as e:
                 print e
                 print "ERROR: Can\'t read line from pipe file"
@@ -31,7 +31,7 @@ class Reader (threading.Thread):
             if data_line != '':
                 #print data_line
                 try:
-                   self._broker.push_data_in(data_line)
+                    self._broker.get(data_line)
                 except Exception as e:
                     print e
                     #sys.stdout.write("Error: PipeReader is unable to push data to Broker\n")

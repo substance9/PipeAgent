@@ -1,15 +1,17 @@
-agent_system:
+system:
 
 pipe_file:
-  location: ./pipe
+  location: ./buffer
 
-tippers_server:
-  ip_address: 127.0.0.1
-  port: 8080
-
-logger:
-  log_files_directory: ./log/
-  rotated: yes
+sender:
+  local_logger:
+    log_file:
+      directory: ./log/
+      prefix: DBH_AP_SNMP
+    rotated: yes
+  tipeprs_sender:
+    ip_address: 127.0.0.1
+    port: 8080
 
 
 

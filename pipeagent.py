@@ -6,6 +6,7 @@ import threading
 
 from broker import Broker
 from reader import Reader
+from locallogger import LocalLogger
 
 
 class PipeAgent(threading.Thread):
@@ -21,10 +22,25 @@ class PipeAgent(threading.Thread):
         self._config = config
 
     def run(self):
+        # 1. Start Broker
         broker = Broker()
         broker.setDaemon(True)
         broker.start()
 
+        # 2. Start Senders
+        try:
+            local_logger = LocalLogger(
+                queue_size=4096,
+                config=self._config['sender']['local_logger'])
+            local_logger.setDaemon(True)
+        except Exception as e:
+            print e
+            print "ERROR: Can\'t create local looger"
+        else:
+            broker.register_sender(local_logger)
+            local_logger.start()
+
+        # 3. Start Reader
         try:
             reader = Reader(broker, config=self._config['pipe_file'])
             reader.setDaemon(True)
@@ -37,10 +53,12 @@ class PipeAgent(threading.Thread):
 
         broker.join()
         reader.join()
+
+
+        #Agent Thread Start Idle Here
         while (True):
             time.sleep(1)
             pass
-
 
 def main(args=None):
     #global log
@@ -59,6 +77,7 @@ def main(args=None):
     agent.setDaemon(True)
     agent.start()
 
+    # Main Thread Idle Here
     while (True):
         time.sleep(1)
 

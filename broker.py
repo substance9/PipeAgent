@@ -10,14 +10,16 @@ class Broker (threading.Thread):
 
         pass
 
-    def push_data_in(self, data):
+    def get(self, data):
         self._on_get_data(data)
 
     def _on_get_data(self, data):
         # test use
-        print data
+        #print data
 
         #TODO: Push data to sender list
+        for sender in self._sender_list:
+            sender.get(data)
         return
 
     def register_sender(self, sender):
