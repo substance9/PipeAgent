@@ -7,6 +7,7 @@ import threading
 from broker import Broker
 from reader import Reader
 from locallogger import LocalLogger
+from mac_tracker_server import MacTrackerServer
 
 
 class PipeAgent(threading.Thread):
@@ -39,6 +40,19 @@ class PipeAgent(threading.Thread):
         else:
             broker.register_sender(local_logger)
             local_logger.start()
+
+        try:
+            mac_tracker_server = MacTrackerServer(
+                queue_size=4096,
+                config=self._config['sender']['mac_tracker_server']
+            )
+            mac_tracker_server.setDaemon(True)
+        except Exception as e:
+            print e
+            print "ERROR: Can\'t create MAC tracker server"
+        else:
+            broker.register_sender(mac_tracker_server)
+            mac_tracker_server.start()
 
         # 3. Start Reader
         try:

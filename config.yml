@@ -1,14 +1,16 @@
 system:
 
 pipe_file:
-  location: ./buffer
+  location: ../buffer
 
 sender:
   local_logger:
     log_file:
-      directory: ./log/
+      directory: ../log/
       prefix: DBH_AP_SNMP
     rotated: yes
+  mac_tracker_server:
+    port: 5556
   tipeprs_sender:
     ip_address: 127.0.0.1
     port: 8080

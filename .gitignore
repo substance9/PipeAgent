@@ -1,0 +1,10 @@
+*.pyc
+buffer
+pipe
+test.py
+*.sh
+*.log
+1.txt
+log/*
+log
+buffer.py

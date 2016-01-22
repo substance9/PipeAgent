@@ -3,8 +3,8 @@ import os
 
 
 class Buffer(object):
-    _first_pipe_location = "pipe"
-    _second_pipe_location = "buffer"
+    _first_pipe_location = "/home/clyde/snmptrapd.log"
+    _second_pipe_location = "../buffer"
     _first_pipe = None
     #_second_pipe = None
     _second_pipe_fd = None
