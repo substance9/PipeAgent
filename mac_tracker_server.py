@@ -29,5 +29,6 @@ class MacTrackerServer(sender.Sender):
 
     def send(self, data_processed):
         topic = data_processed["client_mac"]
-        message_data = str(data_processed["time"]) + "   " + str(data_processed["ap_id"])
+        #message_data = str(data_processed["time"]) + "   " + str(data_processed["ap_id"])
+	message_data = json.dumps(data_processed)
         self._tracker_server.send("%s %s" % (topic, message_data))

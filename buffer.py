@@ -1,5 +1,6 @@
 import time
 import os
+import errno
 
 
 class Buffer(object):
@@ -7,7 +8,7 @@ class Buffer(object):
     _second_pipe_location = "../buffer"
     _first_pipe = None
     #_second_pipe = None
-    _second_pipe_fd = None
+    #_second_pipe_fd = os.open("/dev/null",os.O_WRONLY)
 
     _second_pipe_writable = False
 
@@ -20,14 +21,15 @@ class Buffer(object):
 
         self._open_second_pipe()
 
-        pass
 
     def _open_second_pipe(self):
         try:
             self._second_pipe_fd = os.open(self._second_pipe_location, os.O_WRONLY|os.O_NONBLOCK)
-        except Exception as e:
+        except OSError as e:
             print e
             print "ERROR: Can\'t open second pipe file"
+            if e.errno == errno.ENXIO:
+                return  
         else:
             self._second_pipe_writable = True
 
@@ -45,20 +47,25 @@ class Buffer(object):
                 time.sleep(1)
                 continue
             else:
-                if data_line != '':
+                if data_line.strip() != '':
                     if self._second_pipe_writable is True:
                         try:
                             #with os.fdopen(os.open(self._second_pipe_location, os.O_WRONLY|os.O_NONBLOCK)) as second_pipe:
                             #self._second_pipe.write(data_line)
                             os.write(self._second_pipe_fd, data_line)
-                        except Exception as e:
+                        except OSError as e:
+			    print "ERROR: Can\'t Write line to second pipe file"
                             print e
-                            print "ERROR: Can\'t Write line to second pipe file"
-                            self._second_pipe_writable = False
+                            if e.errno == errno.EPIPE:
+                                self._second_pipe_writable = False
+                                os.close(self._second_pipe_fd)
+                            print "Missed Data: " + data_line
+                            continue
                         else:
-                            print data_line
+                            print "Transfer data: " + data_line
                     # if second pipe file is not writable
                     else:
+                        print "Missed Data: " + data_line
                         self._open_second_pipe()
 
 
